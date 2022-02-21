@@ -4,7 +4,13 @@
   box-sizing: border-box;
 }
 
+html,
 body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
   font-family: "Titillium Web", sans-serif;
   --frostWhite: #f1f2f6;
   --chiefGreen: #6db66b;
