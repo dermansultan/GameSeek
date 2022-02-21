@@ -1,5 +1,5 @@
-import { useState } from "react";
 import styled from "styled-components";
+import ResultCard from "./ResultCard";
 
 const Status = styled.h2`
   font-weight: 600;
@@ -14,18 +14,18 @@ const Status = styled.h2`
   width: 100%;
 `;
 
-const ResultsContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-`;
+const Results = ({ apiResult, loading }) => {
+  if (loading) {
+    return <Status>Loading...</Status>;
+  }
 
-const Results = () => {
-  const [results, setResults] = useState(null);
-  if (results === null) {
+  if (apiResult === null) {
     return <Status>A game will display here.</Status>;
   }
+  if (apiResult === 404) {
+    return <Status>Cannot find that game, try again</Status>;
+  }
+  return <ResultCard apiResult={apiResult} />;
 };
 
 export default Results;

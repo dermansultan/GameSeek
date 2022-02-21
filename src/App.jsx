@@ -4,13 +4,14 @@ import Results from "./components/Results";
 import SearchBar from "./components/SearchBar";
 
 function App() {
-  const [apiResults, setApiResults] = useState(null);
+  const [apiResult, setApiResult] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   return (
     <div className="App" style={{ width: "90%", margin: "0 auto" }}>
       <Nav />
-      <SearchBar setApiResults={setApiResults} />
-      <Results apiResults={apiResults} />
+      <SearchBar setLoading={setLoading} setApiResult={setApiResult} />
+      <Results apiResult={apiResult} loading={loading} />
     </div>
   );
 }

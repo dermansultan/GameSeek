@@ -18,49 +18,74 @@ const Form = styled.form`
     top: 50%;
     transform: translateY(-50%);
   }
+  div {
+    margin: 0 auto;
+    max-width: 964px;
+    width: 100%;
+    position: relative;
+  }
 `;
 
 const Input = styled.input`
-  margin: 0 auto;
   padding: 0px 0px 0px 50px;
   background: #36373f;
   box-shadow: 0px 7px 19px rgba(0, 0, 0, 0.15);
   border-radius: 19px;
   height: 44px;
   width: 100%;
-  max-width: 964px;
+  max-width: 100%;
+  box-sizing: border-box;
   border: none;
   color: var(--frostWhite);
 `;
 
-const SearchBar = ({ setApiResults }) => {
+const SearchBar = ({ setApiResult, setLoading }) => {
   const [query, setQuery] = useState("");
+  const [id, setId] = useState("");
   const handleChange = (e) => {
     setQuery(e.target.value);
-    console.log(e.target.value);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
+    setLoading(true);
     e.preventDefault();
-    axios
+    await axios
       .get(
-        `https://api.rawg.io/api/games?search=${query}&key=${process.env.REACT_API_URL}`
+        `https://api.rawg.io/api/games?search=${query}&key=${process.env.REACT_APP_API_KEY}`
       )
-      .then(
-        (response) =>
-          response.data.count > 0 && setApiResults(response.data.results[0])
-      );
+      .then((response) => {
+        if (response.data.count > 0) {
+          axios
+            .get(
+              `https://api.rawg.io/api/games/${response.data.results[0].id}?key=${process.env.REACT_APP_API_KEY}`
+            )
+            .then((responseTwo) => {
+              setLoading(false);
+              setApiResult({
+                ...response.data.results[0],
+                description:
+                  responseTwo.data.description ||
+                  "No description was found for that search!",
+                website: responseTwo.data.website,
+              });
+            });
+        } else {
+          setApiResult(404);
+        }
+      });
   };
 
   return (
     <Form onSubmit={handleSubmit}>
-      <Search />
-      <Input
-        placeholder="Search for a game!"
-        value={query}
-        onChange={handleChange}
-        required
-      />
+      <div>
+        <Search />
+        <Input
+          placeholder="Search for a game!"
+          value={query}
+          onChange={handleChange}
+          required
+        />
+      </div>
     </Form>
   );
 };
